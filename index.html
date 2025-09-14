@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>小魚乾日簽抽籤</title>
+<style>
+  :root{
+    --bg1: #ffe6f0;
+    --bg2: #fff0d9;
+  }
+  html,body{height:100%;margin:0;padding:0;}
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    font-family: "Arial","Noto Sans TC",sans-serif;
+  }
+
+  .lottery-container {
+    position: relative;
+    width: 90vw;
+    max-width: 600px;
+    aspect-ratio: 1/1;
+    background: linear-gradient(135deg,#ffc0cb,#f5e0c7);
+    border-radius: 28px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    padding: 18px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  /* 小泡泡 */
+  .bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.45);
+    animation: float 6s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-18px); }
+    100% { transform: translateY(0px); }
+  }
+
+  /* 角落符號 */
+  .corner-symbols { position:absolute; z-index:3; }
+  .corner-symbols.top-left{ top:10px; left:12px; font-size:clamp(18px,3.8vw,28px); }
+  .corner-symbols.top-right{ top:10px; right:12px; font-size:clamp(18px,3.8vw,28px); }
+  .corner-symbols.bottom{ bottom:10px; left:50%; transform:translateX(-50%); font-size:clamp(16px,3.4vw,24px); }
+
+  /* 文字框（半透明） */
+  .lot-text {
+    position: absolute;
+    top: 14%;
+    left: 8%;
+    right: 8%;
+    text-align: left;
+    color: #6b3e26;
+    background: rgba(255,255,255,0.38);
+    padding: 12px;
+    border-radius: 12px;
+    transition: all 0.45s ease;
+    z-index: 2;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+
+  .title { font-size: clamp(16px,3.6vw,22px); color:#d2691e; font-weight:700; margin-bottom:6px; text-align:center; }
+  .symbol { font-size: clamp(20px,5vw,32px); color:#ff69b4; text-align:center; margin-bottom:6px; }
+  .meta { font-size: clamp(14px,2.6vw,16px); color:#6b3e26; text-align:center; margin-bottom:8px; }
+
+  /* 今日小祝福：標題靠左、內容置中 */
+  .blessing-container { font-size: clamp(15px,3.6vw,20px); line-height:1.45; }
+  .blessing-label { font-weight:700; margin-right:6px; color:#8b5cf6; display:block; text-align:left; }
+  .blessing-text {
+    display:block;
+    margin-top:6px;
+    white-space:pre-wrap;
+    font-size: clamp(16px,4.2vw,22px);
+    line-height:1.45;
+    color: #8b4513;
+    font-weight:500;
+    text-align:center;
+  }
+
+  /* 抽籤按鈕 */
+  .controls { margin-top:14px; display:flex; gap:10px; align-items:center; }
+  .draw-button, .again-button {
+    padding: 10px 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    color: #4b1a2a;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  }
+  .draw-button { background: linear-gradient(180deg,#ffb6c1,#ff9bb3); }
+  .draw-button.clicked { background: #c0c0c0; cursor: not-allowed; }
+  .draw-button:hover:not(.clicked) { filter:brightness(.98); }
+
+  .again-button { background: linear-gradient(180deg,#fff7b6,#ffd28a); color:#6b3e26; display:none; }
+  .again-button:hover { filter:brightness(.98); }
+
+  /* 從下方飄出動畫 */
+  .animate-up { transform: translateY(80px); opacity:0; }
+  .animate-up.show { transform: translateY(0); opacity:1; transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 420ms; }
+
+  @media(max-width:420px){
+    .lot-text{ padding:10px; }
+    .blessing-text{ font-size:18px; }
+    .title{ font-size:18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lottery-container" id="lottery">
+  <div class="bubble" style="width:10px;height:10px;top:50px;left:80px;"></div>
+  <div class="bubble" style="width:8px;height:8px;top:110px;left:200px;"></div>
+  <div class="bubble" style="width:12px;height:12px;top:250px;left:40px;"></div>
+  <div class="bubble" style="width:9px;height:9px;top:190px;left:270px;"></div>
+
+  <div class="corner-symbols top-left">&lt;^ )))&gt;&lt; 小喵子的日籤</div>
+  <div class="corner-symbols top-right">🍵</div>
+  <div class="corner-symbols bottom">🌸🐰</div>
+
+  <div class="lot-text" id="lot-text">
+    🎴 小魚乾日籤 🎴<br>
+    ✨ 試試手氣，點擊下方抽籤 ✨
+  </div>
+</div>
+
+<div class="controls">
+  <button class="draw-button" id="drawBtn"> <^)))>< 抽小魚乾日籤</button>
+  <button class="again-button" id="againBtn">再抽一次</button>
+</div>
+
+<script>
+const templates = [
+  { title: "貓咪夢想", symbol: "<^ )))><", energy: "勇敢", number: "#001", blessing: "今天也要保持微笑喵～\n哪怕很小的一步也好喵～" },
+  { title: "小魚乾奇蹟", symbol: "<^ )))♡", energy: "溫柔", number: "#002", blessing: "勇敢做自己，夢想會悄悄靠近喵～" },
+  { title: "甜甜下午茶", symbol: "<^ )))><♪", energy: "開心", number: "#003", blessing: "和朋友一起分享快樂吧～\n一杯茶、一塊餅乾作伴喵～" },
+  { title: "溫柔小兔", symbol: "<^ )))兔", energy: "柔軟", number: "#004", blessing: "今天可以抱抱自己，深呼吸三次～" },
+  { title: "陽光晨曦", symbol: "☀️", energy: "希望", number: "#005", blessing: "新的一天，新的可能。\n從微笑開始喵！" },
+  { title: "小小暴風雨", symbol: "⛈️", energy: "釋放", number: "#006", blessing: "哭泣或生氣都沒關係，讓情緒流過就好。" },
+  { title: "星星願望", symbol: "⭐", energy: "夢想", number: "#007", blessing: "抬頭看看星空，悄悄許個願望吧。\n小小希望會慢慢成真喵～" },
+  { title: "糖果心情", symbol: "🍬", energy: "甜蜜", number: "#008", blessing: "今天可能會被小確幸包圍，記得收下喵～" },
+  { title: "小小生氣包", symbol: "💢", energy: "真實", number: "#009", blessing: "生氣是訊號，聽聽自己需要什麼，再照顧自己喵～" },
+  { title: "快樂蹦蹦跳", symbol: "🐰", energy: "活力", number: "#010", blessing: "開心就大聲笑出來吧！\n讓快樂傳染給身邊的人～" },
+  { title: "靜謐午後", symbol: "🍵", energy: "平靜", number: "#011", blessing: "泡杯暖茶，給自己一點放空的時間～" },
+  { title: "勇氣冒險", symbol: "⚔️", energy: "挑戰", number: "#012", blessing: "今天可以嘗試新事物，哪怕小小的一步也很棒！" },
+  { title: "貓咪撒嬌", symbol: "😽", energy: "親密", number: "#013", blessing: "給喜歡的人一點溫柔，會收穫雙倍快樂喵～" },
+  { title: "夜晚安慰", symbol: "🌙", energy: "療癒", number: "#014", blessing: "夜深時，別忘了對自己說聲：你很棒喵。" },
+  { title: "神秘驚喜", symbol: "🎁", energy: "未知", number: "#015", blessing: "可能有意外好事降臨，記得睜大眼睛留意喔～" }
+];
+
+const colors = ["#8b4513","#d2691e","#ff1493","#6a5acd","#228b22","#c71585","#ff4500"];
+
+const lotText = document.getElementById("lot-text");
+const drawBtn = document.getElementById("drawBtn");
+const againBtn = document.getElementById("againBtn");
+
+function drawLot() {
+  const t = templates[Math.floor(Math.random()*templates.length)];
+  const blessingColor = colors[Math.floor(Math.random()*colors.length)];
+  lotText.innerHTML = `
+    <div class="title">${t.title}</div>
+    <div class="symbol">${t.symbol}</div>
+    <div class="meta">能量詞：${t.energy} ｜ 收藏編號：${t.number}</div>
+    <div class="blessing-container">
+      <span class="blessing-label">今日小祝福：</span>
+      <span class="blessing-text" style="color:${blessingColor}">${t.blessing.replace(/\n/g,"<br>")}</span>
+    </div>
+  `;
+  lotText.classList.remove("show");
+  setTimeout(()=>lotText.classList.add("show"),20);
+}
+
+// 初始抽籤
+drawBtn.addEventListener("click", ()=>{
+  drawBtn.classList.add("clicked");
+  drawBtn.disabled = true;
+  drawLot();
+  againBtn.style.display = "inline-block"; // 顯示再抽一次
+});
+
+// 再抽一次按鈕
+againBtn.addEventListener("click", ()=> drawLot());
+</script>
+
+</body>
+</html>
