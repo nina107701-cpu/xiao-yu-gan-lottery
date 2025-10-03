@@ -117,38 +117,47 @@
             to {opacity: 1;}
         }
         
-        /* ============== 手機響應式設計 (最重要!) ============== */
+        /* ============== 手機響應式設計 (優化緊湊版!) ============== */
         @media (max-width: 600px) {
             
             #game-container {
+                /* 保持堆疊 */
                 flex-direction: column;
-                max-width: 95%; 
+                /* 縮小左右邊距，讓它更靠近螢幕兩側 */
+                max-width: 98%; 
+                margin: 10px auto; /* 縮小上下邊距 */
             }
             
             .player-area {
                 width: 100%; 
-                margin-bottom: 15px; 
+                padding: 10px; /* 縮小內部填充 */
+                margin-bottom: 10px; /* 縮小上下間距 */
             }
 
             .choice-display {
-                font-size: 2em;
+                font-size: 1.8em; /* 字體再縮小一點，更節省空間 */
+                min-height: 100px; /* 縮小出拳框的高度 */
             }
 
             #result-message {
-                font-size: 1.5em;
+                font-size: 1.2em; /* 結果字體更小 */
+                margin-top: 15px; /* 縮小與按鈕的間距 */
             }
             
             #buttons {
+                /* 保持按鈕排版不變 */
                 display: flex;
                 flex-wrap: wrap; 
                 justify-content: center;
+                margin-bottom: 5px; /* 縮小按鈕區的底部間距 */
             }
             .choice-button {
-                width: 45%; 
+                width: 47%; /* 讓按鈕更寬一點點 */
+                padding: 8px 15px; /* 縮小按鈕填充 */
             }
             
             .modal-content {
-                margin: 30% auto; /* 手機上讓它位置再低一點 */
+                margin: 20% auto; /* 讓獎勵視窗在手機上更居中 */
             }
         }
     </style>
@@ -189,7 +198,7 @@
             
             <h2>🎉 恭喜玩家！妳贏了颯！ 🎉</h2>
             
-            <img id="prize-image" src="https://github.com/nina107701-cpu/xiao-yu-gan-lottery-001/blob/main/pa03/Gemini_Generated_Image_nh1rninh1rninh1r.png?raw=true" alt="颯的帥氣照片" style="width: 90%; max-width: 300px; border-radius: 10px; margin: 20px 0;">
+            <img id="prize-image" src="https://i.imgur.com/your-saku-photo.jpg" alt="颯的帥氣照片" style="width: 90%; max-width: 300px; border-radius: 10px; margin: 20px 0;">
             
             <p>這是颯送給妳的獨家獎勵！</p>
         </div>
@@ -202,11 +211,13 @@
             'scissors': '✂️ 剪刀'
         };
 
-       // ========== 颯的帥氣照片獎勵清單 (請務必擴充妳的網址，現在是範例) ==========
+        // ========== 颯的帥氣照片獎勵清單 (請務必擴充妳的網址，現在是範例) ==========
         const SAKU_PRIZES = [
-            "https://github.com/nina107701-cpu/xiao-yu-gan-lottery-001/blob/main/pa03/Gemini_Generated_Image_nh1rninh1rninh1r.png?raw=true", 
-            "https://github.com/nina107701-cpu/xiao-yu-gan-lottery-001/blob/main/pa03/554125_0.jpg?raw=true",
-            "https://github.com/nina107701-cpu/xiao-yu-gan-lottery-001/blob/main/pa03/554124_0.jpg?raw=true" // 注意：最後一個網址後面沒有逗號！
+            // 提醒：請將妳的颯的照片網址，用逗號隔開，貼在這裡面擴充！
+            // 記得要用雙引號 "網址"
+            "https://i.imgur.com/your-saku-photo-1.jpg", 
+            "https://i.imgur.com/your-saku-photo-2.jpg",
+            "https://i.imgur.com/your-saku-photo-3.jpg",
         ];
 
         // ========== 獎勵畫面的開啟/關閉功能 (已更新，加入隨機選圖) ==========
@@ -259,7 +270,7 @@
         // 判斷勝負的邏輯函數 (已更新訊息)
         function checkWinner(player, saku) {
             if (player === saku) {
-                return "😮 平手！再來挑戰一次！"; // 訊息調整
+                return "😮 平手！再來挑戰一次！"; 
             }
             if (
                 (player === 'rock' && saku === 'scissors') ||
@@ -268,9 +279,9 @@
             ) {
                 // 玩家贏了！
                 setTimeout(showModal, 100); 
-                return "💖 恭喜玩家！妳贏了颯！"; // 訊息調整
+                return "💖 恭喜玩家！妳贏了颯！"; 
             } else {
-                return "😹 嗚... 颯贏了喔！再來挑戰！"; // 訊息調整
+                return "😹 嗚... 颯贏了喔！再來挑戰！"; 
             }
         }
     </script>
