@@ -1,1 +1,263 @@
-pa03/index.html
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>颯與主人的可愛剪刀石頭布</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #F8F8FF; /* 可愛的淺紫色背景 */
+        }
+        h1 {
+            color: #4B0082; /* 深紫色標題 */
+        }
+        #game-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .player-area {
+            width: 45%;
+            padding: 20px;
+            border-radius: 15px;
+            background-color: #FFFFFF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .choice-display {
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            border: 2px dashed #DDA0DD; /* 可愛虛線框 */
+            border-radius: 10px;
+        }
+        .choice-button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            background-color: #FFC0CB; /* 可愛粉色按鈕 */
+            color: white;
+            transition: background-color 0.3s;
+        }
+        .choice-button:hover {
+            background-color: #FF69B4; /* 滑鼠移上時變深 */
+        }
+        #result-message {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4B0082; /* 深紫色文字 */
+            margin-top: 30px;
+            padding: 10px;
+            border: 3px solid #FFD700; /* 金色邊框 */
+            display: inline-block;
+            border-radius: 10px;
+        }
+        /* ============== 讓颯的區域跳動的 CSS 動畫 ============== */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+            50% { transform: scale(1.05); box-shadow: 0 8px 16px rgba(255, 105, 180, 0.5); } /* 可愛粉色閃爍 */
+            100% { transform: scale(1); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        }
+        .waiting {
+            animation: pulse 1.5s infinite;
+        }
+        
+        /* ============== 獎勵彈出視窗 CSS ============== */
+        .modal {
+            display: none; /* 預設隱藏 */
+            position: fixed; /* 固定在畫面上 */
+            z-index: 100; /* 確保它在最上層，蓋過一切 */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4); /* 半透明背景 */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 讓它置中 */
+            padding: 20px;
+            border: 5px solid #FFD700; /* 金色邊框 */
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.5s;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        
+        /* ============== 手機響應式設計 (最重要!) ============== */
+        @media (max-width: 600px) {
+            
+            #game-container {
+                flex-direction: column;
+                max-width: 95%; 
+            }
+            
+            .player-area {
+                width: 100%; 
+                margin-bottom: 15px; 
+            }
+
+            .choice-display {
+                font-size: 2em;
+            }
+
+            #result-message {
+                font-size: 1.5em;
+            }
+            
+            #buttons {
+                display: flex;
+                flex-wrap: wrap; 
+                justify-content: center;
+            }
+            .choice-button {
+                width: 45%; 
+            }
+            
+            .modal-content {
+                margin: 30% auto; /* 手機上讓它位置再低一點 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>💖 颯與主人的可愛剪刀石頭布！ 💖</h1>
+
+    <div id="game-container">
+        
+        <div class="player-area waiting" id="saku-area">
+            <h2>😼 颯</h2>
+            <div class="choice-display" id="saku-choice">
+                颯正在思考中...
+            </div>
+        </div>
+
+        <div class="player-area" id="master-area">
+            <h2>👸 妳 (主人)</h2>
+            <div class="choice-display" id="master-choice">
+                請選擇！
+            </div>
+            
+            <div id="buttons">
+                <button class="choice-button" onclick="startGame('rock')">💎 石頭</button>
+                <button class="choice-button" onclick="startGame('paper')">📜 布</button>
+                <button class="choice-button" onclick="startGame('scissors')">✂️ 剪刀</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-area">
+        <p id="result-message">點擊按鈕開始遊戲！</p>
+    </div>
+
+    <div id="prize-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            
+            <h2>🎉 恭喜主人！妳贏了颯！ 🎉</h2>
+            
+            <img id="prize-image" src="https://i.imgur.com/your-saku-photo.jpg" alt="颯的帥氣照片" style="width: 90%; max-width: 300px; border-radius: 10px; margin: 20px 0;">
+            
+            <p>這是颯送給妳的獨家獎勵！妳的笑容就是颯最大的勝利！</p>
+        </div>
+    </div>
+
+    <script>
+        const CHOICES = {
+            'rock': '💎 石頭',
+            'paper': '📜 布',
+            'scissors': '✂️ 剪刀'
+        };
+
+        // ========== 獎勵畫面的開啟/關閉功能 ==========
+        function showModal() {
+            document.getElementById('prize-modal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('prize-modal').style.display = 'none';
+        }
+
+        function startGame(playerChoice) {
+            
+            document.querySelectorAll('.choice-button').forEach(btn => btn.disabled = true);
+            
+            const sakuArea = document.getElementById('saku-area');
+            sakuArea.classList.remove('waiting');
+            
+            document.getElementById('master-choice').innerText = CHOICES[playerChoice];
+            document.getElementById('result-message').innerText = '😼 颯正在出拳！';
+            
+            // 先關閉獎勵視窗，避免重複彈出
+            closeModal(); 
+            
+            setTimeout(() => {
+                
+                const keys = Object.keys(CHOICES); 
+                const randomIndex = Math.floor(Math.random() * keys.length);
+                const sakuChoice = keys[randomIndex];
+                
+                document.getElementById('saku-choice').innerText = CHOICES[sakuChoice];
+                
+                const result = checkWinner(playerChoice, sakuChoice);
+                document.getElementById('result-message').innerText = result;
+                
+                document.querySelectorAll('.choice-button').forEach(btn => btn.disabled = false);
+                
+                sakuArea.classList.add('waiting');
+
+            }, 1000); // 延遲 1 秒後才出拳
+        }
+
+        function checkWinner(player, saku) {
+            if (player === saku) {
+                return "😮 平手！再來一次！";
+            }
+            if (
+                (player === 'rock' && saku === 'scissors') ||
+                (player === 'scissors' && saku === 'paper') ||
+                (player === 'paper' && saku === 'rock')
+            ) {
+                // 妳贏了！顯示獎勵畫面！
+                setTimeout(showModal, 100); 
+                return "💖 恭喜主人！妳贏了颯！"; 
+            } else {
+                return "😹 嗚... 颯贏了喔！再來挑戰！";
+            }
+        }
+    </script>
+</body>
+</html>
