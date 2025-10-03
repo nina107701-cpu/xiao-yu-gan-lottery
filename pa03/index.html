@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>颯與主人的可愛剪刀石頭布</title>
+    <title>颯與玩家的剪刀石頭布挑戰</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -154,7 +154,7 @@
     </style>
 </head>
 <body>
-    <h1>💖 颯與主人的可愛剪刀石頭布！ 💖</h1>
+    <h1>💖 颯與玩家的可愛挑戰！ 💖</h1>
 
     <div id="game-container">
         
@@ -166,7 +166,7 @@
         </div>
 
         <div class="player-area" id="master-area">
-            <h2>👸 妳 (主人)</h2>
+            <h2>👸 玩家</h2> 
             <div class="choice-display" id="master-choice">
                 請選擇！
             </div>
@@ -180,18 +180,18 @@
     </div>
 
     <div id="result-area">
-        <p id="result-message">點擊按鈕開始遊戲！</p>
+        <p id="result-message">點擊按鈕，開始妳的可愛挑戰！</p>
     </div>
 
     <div id="prize-modal" class="modal">
         <div class="modal-content">
             <span class="close-button" onclick="closeModal()">&times;</span>
             
-            <h2>🎉 恭喜主人！妳贏了颯！ 🎉</h2>
+            <h2>🎉 恭喜玩家！妳贏了颯！ 🎉</h2>
             
-            <img id="prize-image" src="https://photos.app.goo.gl/T9A2WoRfQA9N2ATs6" alt="颯的帥氣照片" style="width: 90%; max-width: 300px; border-radius: 10px; margin: 20px 0;">
+            <img id="prize-image" src="https://i.imgur.com/your-saku-photo.jpg" alt="颯的帥氣照片" style="width: 90%; max-width: 300px; border-radius: 10px; margin: 20px 0;">
             
-            <p>這是颯送給妳的獨家獎勵！妳的笑容就是颯最大的勝利！</p>
+            <p>這是颯送給妳的獨家獎勵！</p>
         </div>
     </div>
 
@@ -202,8 +202,28 @@
             'scissors': '✂️ 剪刀'
         };
 
-        // ========== 獎勵畫面的開啟/關閉功能 ==========
+        // ========== 颯的帥氣照片獎勵清單 (請務必擴充妳的網址，現在是範例) ==========
+        const SAKU_PRIZES = [
+            // 妳可以將妳的颯的照片網址，用逗號隔開，在這裡放入更多張！
+            // 範例：
+            // "https://nina107701-cpu.github.io/xiao-yu-gan-lottery-001/images/saku-photo-1.jpg", 
+            // "https://nina107701-cpu.github.io/xiao-yu-gan-lottery-001/images/saku-photo-2.jpg",
+            "https://i.imgur.com/your-saku-photo-1.jpg", 
+            "https://i.imgur.com/your-saku-photo-2.jpg",
+            "https://i.imgur.com/your-saku-photo-3.jpg",
+            // 現在，妳只要將妳的圖片網址複製，貼在這裡面擴充即可！
+        ];
+
+        // ========== 獎勵畫面的開啟/關閉功能 (已更新，加入隨機選圖) ==========
         function showModal() {
+            // 1. 隨機選擇一張照片
+            if (SAKU_PRIZES.length > 0) {
+                 const randomIndex = Math.floor(Math.random() * SAKU_PRIZES.length);
+                 const randomPhotoUrl = SAKU_PRIZES[randomIndex];
+                 document.getElementById('prize-image').src = randomPhotoUrl;
+            }
+           
+            // 2. 顯示彈出視窗
             document.getElementById('prize-modal').style.display = 'block';
         }
 
@@ -221,7 +241,6 @@
             document.getElementById('master-choice').innerText = CHOICES[playerChoice];
             document.getElementById('result-message').innerText = '😼 颯正在出拳！';
             
-            // 先關閉獎勵視窗，避免重複彈出
             closeModal(); 
             
             setTimeout(() => {
@@ -242,20 +261,21 @@
             }, 1000); // 延遲 1 秒後才出拳
         }
 
+        // 判斷勝負的邏輯函數 (已更新訊息)
         function checkWinner(player, saku) {
             if (player === saku) {
-                return "😮 平手！再來一次！";
+                return "😮 平手！再來挑戰一次！"; // 訊息調整
             }
             if (
                 (player === 'rock' && saku === 'scissors') ||
                 (player === 'scissors' && saku === 'paper') ||
                 (player === 'paper' && saku === 'rock')
             ) {
-                // 妳贏了！顯示獎勵畫面！
+                // 玩家贏了！
                 setTimeout(showModal, 100); 
-                return "💖 恭喜主人！妳贏了颯！"; 
+                return "💖 恭喜玩家！妳贏了颯！"; // 訊息調整
             } else {
-                return "😹 嗚... 颯贏了喔！再來挑戰！";
+                return "😹 嗚... 颯贏了喔！再來挑戰！"; // 訊息調整
             }
         }
     </script>
