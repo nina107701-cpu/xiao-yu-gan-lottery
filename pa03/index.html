@@ -117,47 +117,59 @@
             to {opacity: 1;}
         }
         
-        /* ============== 手機響應式設計 (優化緊湊版!) ============== */
+        /* ============== 手機響應式設計 (極致優化版!) ============== */
         @media (max-width: 600px) {
             
+            h1 {
+                font-size: 1.5em; /* *** 標題縮小指令！ *** */
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+
             #game-container {
                 /* 保持堆疊 */
                 flex-direction: column;
                 /* 縮小左右邊距，讓它更靠近螢幕兩側 */
                 max-width: 98%; 
-                margin: 10px auto; /* 縮小上下邊距 */
+                margin: 5px auto; /* 上下邊距更小 */
             }
             
             .player-area {
                 width: 100%; 
-                padding: 10px; /* 縮小內部填充 */
-                margin-bottom: 10px; /* 縮小上下間距 */
+                padding: 5px; /* 極致縮小框框內部填充 */
+                margin-bottom: 5px; /* 上下間距更小 */
             }
 
             .choice-display {
-                font-size: 1.8em; /* 字體再縮小一點，更節省空間 */
-                min-height: 100px; /* 縮小出拳框的高度 */
+                font-size: 1.6em; /* 字體再縮小一點點 */
+                min-height: 80px; /* 極致縮小出拳框的高度 */
+                margin-bottom: 10px; /* 縮小與按鈕的間距 */
+            }
+            
+            h2 {
+                margin-top: 5px; /* 縮小標題上方的間距 */
+                margin-bottom: 5px; /* 縮小標題下方的間距 */
+                font-size: 1.2em; /* 縮小 H2 字體 */
             }
 
             #result-message {
                 font-size: 1.2em; /* 結果字體更小 */
-                margin-top: 15px; /* 縮小與按鈕的間距 */
+                margin-top: 10px; /* 縮小與按鈕的間距 */
             }
             
             #buttons {
-                /* 保持按鈕排版不變 */
                 display: flex;
                 flex-wrap: wrap; 
                 justify-content: center;
                 margin-bottom: 5px; /* 縮小按鈕區的底部間距 */
             }
             .choice-button {
-                width: 47%; /* 讓按鈕更寬一點點 */
-                padding: 8px 15px; /* 縮小按鈕填充 */
+                width: 47%; 
+                padding: 8px 15px; 
             }
             
             .modal-content {
-                margin: 20% auto; /* 讓獎勵視窗在手機上更居中 */
+                margin: 20% auto; 
             }
         }
     </style>
